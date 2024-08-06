@@ -1,9 +1,9 @@
 package main
 
 type LinearTransformation interface {
-	Transform(Coordinate) Coordinate
+	Multiplication(Coordinate) Coordinate
 }
 
-func (m1 Matrix) Transform(m2 Matrix) Matrix {
-	return m1.MatrixMultiplication(m2)
+func (m1 Matrix) Multiplication(m2 Matrix) Matrix {
+	return MatrixMultiplication(m1, m2)
 }

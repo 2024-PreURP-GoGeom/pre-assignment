@@ -74,7 +74,7 @@ func (m1 Matrix) Transpose() Matrix {
 	return transpose
 }
 
-func (m1 Matrix) MatrixMultiplication(m2 Matrix) Matrix {
+func MatrixMultiplication(m1, m2 Matrix) Matrix {
 	// 행렬곱 가능한지 체크
 	fmt.Println(m1.Size(), m2.Size())
 	if m1.Size()[1] != m2.Size()[0] {

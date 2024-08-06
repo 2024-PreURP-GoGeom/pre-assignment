@@ -8,27 +8,41 @@ import (
 type Function struct {
 	domain      GeneralSet
 	codomain    GeneralSet
-	maprelation func(x any) any
+	maprelation func(x Coordinate) Matrix
 }
 
-func (F Function) Computation(x any) any {
-	ok := F.domain.Contains(x)
+func (F Function) Computation(v Coordinate) Matrix {
+	// ok := F.domain.Contains(v)
+	ok := true
 	if !ok {
-		return nil
+		return Matrix{}
 	}
-	return F.maprelation(x)
+	return F.maprelation(v)
 }
 
 var FunctionSpace = GeneralSet{reflect.TypeOf(exfunc1)}
 
-func Diffrel(F Function) func(x any) any {
-	return func(x any) any {
-		if IsSafe(x, Real) {
-			point := x.(float64)
-			slope := ((F.Computation(point + epsilon)).(float64) - (F.Computation(point)).(float64)) / epsilon
-			return slope
+func Diffrel(F Function, dom GeneralSet) func(x Coordinate) Matrix {
+	return func(x Coordinate) Matrix {
+		// IsSafe 이후 수정
+		if true {
+			point := x
+			domainDim := len(point.elements)
+			totalderiv := make([]Coordinate, domainDim)
+
+			for i := range point.elements {
+				// fmt.Println(i, "dimension!!")
+				infinitesimal := make([]float64, domainDim)
+				infinitesimal[i] = epsilon
+				epsilonCoord := Coordinate{elements: infinitesimal}
+
+				slope := (F.Computation(point.Addition(epsilonCoord)).Addition(F.Computation(point).AdditiveInverse())).ScalarMultiplication(bigNum)
+				totalderiv[i] = Coordinate{slope.elements[0].elements}
+			}
+
+			return Matrix{elements: totalderiv}
 		}
-		return nil
+		return Matrix{}
 	}
 }
 
@@ -36,27 +50,14 @@ func Differential(F Function) Function {
 	var Derivative Function
 	Derivative.domain = F.domain
 	Derivative.codomain = F.codomain
-	Derivative.maprelation = Diffrel(F)
+	Derivative.maprelation = Diffrel(F, F.domain)
 	return Derivative
 }
 
-func DefiniteIntegral(F Function, a, b float64) float64 {
-	if IsSafe(a, Real) && IsSafe(b, Real) {
-		n := bigNum
-		h := (b - a) / n
-		result := 0.0
-		for i := 0; i <= int(n); i++ {
-			x := a + float64(i)*h
-			fx := F.Computation(x).(float64)
-			if i == 0 || i == int(n) {
-				result += fx / 2
-			} else {
-				result += fx
-			}
-		}
-		return result * h
-	}
-	return math.NaN()
+var Diff Function = Function{
+	domain:      FunctionSpace,
+	codomain:    FunctionSpace,
+	maprelation: Differential,
 }
 
 func IsSafe(input any, domain GeneralSet) bool {
@@ -67,11 +68,23 @@ func IsSafe(input any, domain GeneralSet) bool {
 	return true
 }
 
-func Exmapping(input any) any {
-	return math.Cosh(input.(float64))
+func Exmapping(input Coordinate) Matrix {
+	return Matrix{elements: []Coordinate{{elements: []float64{math.Cos(input.elements[0])}}}}
+}
+
+func Exmapping2(input Coordinate) Matrix {
+	x := input.elements[0]
+	y := input.elements[1]
+	return Matrix{elements: []Coordinate{{elements: []float64{x*x + y*y}}}}
 }
 
 var exfunc1 Function = Function{
 	domain:      Real,
 	codomain:    Real,
 	maprelation: Exmapping}
+
+var exfunc2 Function = Function{
+	domain:      GeneralSet{},
+	codomain:    GeneralSet{},
+	maprelation: Exmapping2,
+}

@@ -4,7 +4,7 @@ import (
 	"fmt"
 )
 
-const epsilon float64 = 0.00000000001
+const epsilon float64 = 0.0001
 const bigNum float64 = 10000
 
 func main() {
@@ -20,11 +20,8 @@ func main() {
 	fmt.Println(Real.Contains(x))
 	fmt.Println(Real.Contains(y))
 	fmt.Println(Integer.Contains(y))
-	fmt.Println(exfunc1.maprelation(5.00))
-	fmt.Println(FunctionSpace.Contains(exfunc1))
-	fmt.Println(exfunc1.Computation(5))
-	fmt.Println(Differential(exfunc1).Computation(5.00))
-	fmt.Println(DefiniteIntegral(exfunc1, 1, 5))
+
+	// fmt.Println(DefiniteIntegral(exfunc1, 1, 5))
 	fmt.Println(v1.Addition(v2).elements)
 	fmt.Println(v1.AdditiveInverse().elements)
 	fmt.Println(m1.elements)
@@ -33,5 +30,13 @@ func main() {
 	fmt.Println(m2.AdditiveInverse())
 	fmt.Println(m1.Size())
 	fmt.Println(m1.Transpose())
-	fmt.Println(m1.MatrixMultiplication(m2.Transpose()))
+	fmt.Println(MatrixMultiplication(m1, m2.Transpose()))
+
+	fmt.Println(exfunc1.maprelation(Coordinate{elements: []float64{5.00}}))
+	fmt.Println(FunctionSpace.Contains(exfunc1))
+	fmt.Println(exfunc1.Computation(Coordinate{elements: []float64{3.14}}))
+	fmt.Println(Differential(exfunc1).Computation(Coordinate{elements: []float64{0.6}}))
+	fmt.Println(exfunc2.Computation(Coordinate{elements: []float64{1, 1}}))
+	fmt.Println(Differential(exfunc2).Computation(Coordinate{elements: []float64{1, 1}}))
+
 }

@@ -10,6 +10,10 @@ type Coordinate struct {
 	elements []float64
 }
 
+type Tuple[T any] struct {
+	elements []T
+} // 아예 모든 것을 튜플로 정의해버리자.
+
 func (c Coordinate) Len() int {
 	return len(c.elements)
 }
